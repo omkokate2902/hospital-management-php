@@ -1,0 +1,32 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php_app
+    ports:
+      - "8080:80"  # Exposing port 8080 on host to port 80 on container
+    volumes:
+      - ./src:/var/www/html  # Mounting the local code directory to the container
+    networks:
+      - app_network
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:10.5  # Using MariaDB as an alternative to MySQL
+    container_name: mariadb_db
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: app_db
+    volumes:
+      - db_data:/var/lib/mysql  # Persist MySQL data across restarts
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  db_data:
